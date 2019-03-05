@@ -36,6 +36,10 @@ Timestamp: 1/2/2019 11:44:41 PM
 #include "Lina/Camera.hpp"
 #include "Lina/Transform.hpp"
 
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_opengl3.h"
+#include "ImGUI/imgui_impl_sdl.h"
+
 namespace LinaEngine
 {
 #define BIND_EVENT_FN(x) std::bind(&RenderingEngine_OpenGL::x, this, std::placeholders::_1)
@@ -210,16 +214,34 @@ namespace LinaEngine
 
 		sceneCamera.OnInput(app->GetInputEngine());
 
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+
+		//ImGui_ImplSDL2_InitForOpenGL(GetMainWindow().Get(), GetMainWindow().GetContext());
+		ImGui_ImplOpenGL3_Init();
+
 	}
 
 	void RenderingEngine_OpenGL::OnUpdate()
 	{
-		RenderingEngine::OnUpdate();
+		
 
 
 
 		glClearColor(0.2f, 0.7f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2(GetMainWindow().GetWidth(), GetMainWindow().GetHeight());
+
+		ImGui_ImplOpenGL3_NewFrame();
+		//ImGui_ImplSDL2_NewFrame(GetMainWindow().Get());
+		ImGui::NewFrame();
+
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
 
 		baseTexture.Use();
 		overlayTexture.Use();
@@ -266,7 +288,10 @@ namespace LinaEngine
 		}
 		//	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		RenderingEngine::OnUpdate();
 
 	}
 
