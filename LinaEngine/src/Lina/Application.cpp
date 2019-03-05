@@ -97,6 +97,7 @@ namespace LinaEngine
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
+			m_RenderingEngine->GetMainWindow().OnUpdate();
 
 		}
 
@@ -111,10 +112,12 @@ namespace LinaEngine
 	void Application::PushLayer(Layer * layer)
 	{
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 	void Application::PushOverlay(Layer * layer)
 	{
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 }

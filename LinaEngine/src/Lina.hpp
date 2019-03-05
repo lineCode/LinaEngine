@@ -30,6 +30,8 @@ Timestamp: 12/29/2018 11:21:31 PM
 #include "Lina/Utility/Log.hpp"
 #include "Lina/Utility/Math/Vector.hpp"
 
+#include "Lina/ImGui/ImGuiLayer.hpp"
+
 // *********** ENTRY POINT *********** 
 #include "Lina/EntryPoint.hpp"
 // *********** ENTRY POINT *********** 
