@@ -176,3 +176,66 @@ project "Sandbox"
 				
 
 	
+project "LinaEditor"
+
+	location "LinaEditor"
+	kind "ConsoleApp"
+	language "C++"
+	
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-obj/" .. outputdir .. "/%{prj.name}")
+	
+	files
+	{
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+	
+	includedirs
+	{
+		"LinaEngine/vendor/spdlog/include",
+		"LinaEngine/src"
+	}
+	
+	links
+	{
+		"LinaEngine"
+	}
+	
+	filter "system:windows"
+		cppdialect "C++17"
+		staticruntime "On"
+		systemversion "latest"
+		
+		defines
+		{
+			"LINA_PLATFORM_WINDOWS",
+			"LINA_ENABLE_LOGGING",
+		}
+		
+		postbuildcommands
+		{	
+			
+			("{COPY}  ../%{DLLDir.LinaEngine}/LinaEngine.dll  ../bin/" .. outputdir .. "/LinaEditor"),
+			("{COPY} ../%{DLLDir.SDL}/SDL2.dll ../bin/" .. outputdir .. "/LinaEditor"),
+			("{COPY} ../Sandbox/Resources ../bin/" .. outputdir .. "/LinaEditor/Resources")
+			--- ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/LinaEditor"),	
+			--- ("{COPY} ../%{DLLDir.SDL}/SDL2.dll ../bin/" .. outputdir .. "/LinaEditor")
+		}
+
+		
+	filter "configurations:Debug"
+		defines "LINA_DEBUG"
+		buildoptions "/MDd"
+		symbols "On"
+		
+	filter "configurations:Release"
+		defines "LINA_RELEASE"
+		buildoptions "/MD"
+		optimize "On"
+		
+	filter "configurations:Dist"
+		defines "LINA_DIST"
+		buildoptions "/MD"
+		optimize "On"

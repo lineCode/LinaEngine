@@ -45,10 +45,9 @@ class Sandbox : public LinaEngine::Application
 public:
 	Sandbox() { 
 		
-		LinaEngine::Layer* l = new TestLayer();
+		//LinaEngine::Layer* l = new TestLayer();
 		
-		PushLayer(l);
-		PushOverlay(new LinaEngine::ImGuiLayer());
+		//PushLayer(l);
 	}
 	~ Sandbox(){}
 
