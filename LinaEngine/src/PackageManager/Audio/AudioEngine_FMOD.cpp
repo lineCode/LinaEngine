@@ -59,7 +59,7 @@ namespace LinaEngine
 		m_Modes[CATEGORY_SFX] = FMOD_DEFAULT;
 		m_Modes[CATEGORY_SONG] = FMOD_DEFAULT | FMOD_CREATESTREAM | FMOD_LOOP_NORMAL;
 
-		// Seed the random number generator for SFXs.
+		// Seed the random number generator for SFXs, that will be used to create random value in a given interval.
 		srand(time(0));
 
 		LINA_CORE_TRACE("[Initialization] -> Audio Engine FMOD ({0})", typeid(*this).name());
@@ -105,10 +105,20 @@ namespace LinaEngine
 
 	void AudioEngine_FMOD::Update(float deltaTime)
 	{
+		// If a song is playing and the song is FADE_IN mode, increase the volume of the current song little by little.
+		// Once the volume reaches 1.0f, stop fading in the volume.
+
+		// If a song is playing and the song is FADE_OUT mode, decrease the volume of the current song little by little.
+		// Once the volume reaches 0.0f, stop the song and stop fading out the volume.
+
+		// If no song playing and there is a new song set up to play next, start playing the new song.
+
 		const float fadeTime = 1.0f; // Seconds.
 		
 		if (m_CurrentSong != 0 && m_Fade == FADE_IN)
 		{
+			// Store the current volume of the song into a float variable.
+			// And then calculate the nextVolume value.
 			float volume;
 			m_CurrentSong->getVolume(&volume);
 			float nextVolume = volume + deltaTime / fadeTime;
@@ -125,6 +135,8 @@ namespace LinaEngine
 		}
 		else if (m_CurrentSong != 0 && m_Fade == FADE_OUT)
 		{
+			// Store the current volume of the song into a float variable.
+			// And then calculate the nextVolume value.
 			float volume;
 			m_CurrentSong->getVolume(&volume);
 			float nextVolume = volume - deltaTime / fadeTime;
@@ -148,7 +160,6 @@ namespace LinaEngine
 		}
 
 		m_System->update();
-
 	}
 
 	void AudioEngine_FMOD::LoadSFX(const std::string & path)
@@ -190,9 +201,6 @@ namespace LinaEngine
 
 	void AudioEngine_FMOD::PlaySong(const std::string & path)
 	{
-		// Play one song at a time. (Only one stream buffer for songs).
-		// When switching songs, fade out the existing one and fade in the new one.
-
 		// Ignore if this song is already playing.
 		if (m_CurrentSongPath == path)
 			return;

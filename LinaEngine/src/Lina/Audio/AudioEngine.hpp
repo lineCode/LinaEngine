@@ -11,14 +11,19 @@ namespace LinaEngine
 	public:
 		virtual ~AudioEngine();
 
+		/* Initializes the audioEngine.  */
 		virtual void Initialize();
 
+		/* Starts the audioEngine.  */
 		virtual void Start() = 0;
 
+		/* Called in each frame.  */
 		virtual void OnUpdate();
 
+		/* Called when an event occurs.  */
 		virtual void OnEvent(class Event& e) = 0;
 
+		/* Sets the application reference.  */
 		FORCEINLINE void SetApplication(class Application& p)
 		{
 			LINA_CORE_ASSERT(&p, "Application is nullptr!");
