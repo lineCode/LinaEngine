@@ -50,5 +50,6 @@ namespace LinaEngine
 
 	std::string& ResourceConstants::ShadersPath = std::string(LINA_RESOURCESPATH) + std::string("Shaders\\GLSL\\");
 	std::string& ResourceConstants::TexturesPath = std::string(LINA_RESOURCESPATH) + std::string("Textures\\");
+	std::string& ResourceConstants::SoundsPath = std::string(LINA_RESOURCESPATH) + std::string("Sounds\\");
 }
 

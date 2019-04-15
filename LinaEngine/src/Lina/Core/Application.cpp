@@ -84,6 +84,9 @@ namespace LinaEngine
 		// Start the rendering renderingEngine.
 		m_RenderingEngine->Start();
 
+		// Start the audio audioEngine.
+		m_AudioEngine->Start();
+
 		// Set running flag.
 		m_Running = true;
 
