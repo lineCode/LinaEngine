@@ -17,13 +17,16 @@ IncludeDir["GLM"] = "LinaEngine/vendor/glm"
 IncludeDir["GLAD"] = "LinaEngine/vendor/glad/include"
 IncludeDir["GLFW"] = "LinaEngine/vendor/GLFW/include"
 IncludeDir["IMGUI"] = "LinaEngine/vendor/imgui"
+IncludeDir["FMOD"] = "LinaEngine/vendor/FMOD/include"
 
 DLLDir = {}
 DLLDir["SDL"] = "LinaEngine/vendor/SDL2-2.0.9/lib/x64"
 DLLDir["LinaEngine"] = "bin/" .. outputdir .. "/LinaEngine"
+DLLDir["FMOD"] = "LinaEngine/vendor/FMOD/bin"
 
 LibDir = {}
 LibDir["SDL"] = "LinaEngine/vendor/SDL2-2.0.9/lib/x64"
+LibDir["FMOD"] = "LinaEngine/vendor/FMOD/lib"
 
 include "LinaEngine/vendor/glad"
 include "LinaEngine/vendor/GLFW"
@@ -57,11 +60,13 @@ project "LinaEngine"
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.IMGUI}",
+		"%{IncludeDir.FMOD}",
 	}
 	
 	libdirs
 	{
-		"%{LibDir.SDL}"
+		"%{LibDir.SDL}",
+		"%{LibDir.FMOD}",
 	}
 	
 	links
@@ -71,7 +76,8 @@ project "LinaEngine"
 		"glad",
 		"opengl32.lib",
 		"GLFW",
-		"IMGUI"
+		"IMGUI",
+		"fmodL64_vc.lib"
 	}
 			
 		filter "system:windows"
@@ -158,6 +164,7 @@ project "Sandbox"
 			
 			("{COPY}  ../%{DLLDir.LinaEngine}/LinaEngine.dll  ../bin/" .. outputdir .. "/Sandbox"),
 			("{COPY} ../%{DLLDir.SDL}/SDL2.dll ../bin/" .. outputdir .. "/Sandbox"),
+			("{COPY} ../%{DLLDir.FMOD}/fmodL64.dll ../bin/" .. outputdir .. "/Sandbox"),
 			("{COPY} ../Sandbox/Resources ../bin/" .. outputdir .. "/Sandbox/Resources")
 			--- ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"),	
 			--- ("{COPY} ../%{DLLDir.SDL}/SDL2.dll ../bin/" .. outputdir .. "/Sandbox")
