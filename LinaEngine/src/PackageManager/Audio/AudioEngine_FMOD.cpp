@@ -10,6 +10,8 @@
 #include "Lina/Core/Application.hpp"
 #include "Lina/Input/InputEngine.hpp"
 
+#include <GLFW/glfw3.h> // TEMPORARY
+
 namespace LinaEngine
 {
 
@@ -66,10 +68,13 @@ namespace LinaEngine
 	void LinaEngine::AudioEngine_FMOD::Start()
 	{
 		LoadSFX(ResourceConstants::SoundsPath + "jaguar.wav");
+		LoadSong(ResourceConstants::SongsPath + "stereo.ogg");
 	}
 
 	void LinaEngine::AudioEngine_FMOD::OnUpdate()
 	{
+		float deltaTime = glfwGetTime();
+		this->Update(deltaTime);
 
 		OnInput(app->GetInputEngine());
 	}
@@ -88,6 +93,62 @@ namespace LinaEngine
 		{
 			StopSFXs();
 		}
+		if (i.GetKeyDown(LINA_KEY_N))
+		{
+			PlaySong(ResourceConstants::SongsPath + "stereo.ogg");
+		}
+		if (i.GetKeyDown(LINA_KEY_M))
+		{
+			StopSongs();
+		}
+	}
+
+	void AudioEngine_FMOD::Update(float deltaTime)
+	{
+		const float fadeTime = 1.0f; // Seconds.
+		
+		if (m_CurrentSong != 0 && m_Fade == FADE_IN)
+		{
+			float volume;
+			m_CurrentSong->getVolume(&volume);
+			float nextVolume = volume + deltaTime / fadeTime;
+
+			if (nextVolume >= 1.0f)
+			{
+				m_CurrentSong->setVolume(1.0f);
+				m_Fade = FADE_NONE;
+			}
+			else
+			{
+				m_CurrentSong->setVolume(nextVolume);
+			}
+		}
+		else if (m_CurrentSong != 0 && m_Fade == FADE_OUT)
+		{
+			float volume;
+			m_CurrentSong->getVolume(&volume);
+			float nextVolume = volume - deltaTime / fadeTime;
+
+			if (nextVolume <= 0.0f)
+			{
+				m_CurrentSong->stop();
+				m_CurrentSong = 0;
+				m_CurrentSongPath.clear();
+				m_Fade = FADE_NONE;
+			}
+			else
+			{
+				m_CurrentSong->setVolume(nextVolume);
+			}
+		}
+		else if (m_CurrentSong == 0 && !m_NextSongPath.empty())
+		{
+			PlaySong(m_NextSongPath);
+			m_NextSongPath.clear();
+		}
+
+		m_System->update();
+
 	}
 
 	void AudioEngine_FMOD::LoadSFX(const std::string & path)
@@ -123,12 +184,39 @@ namespace LinaEngine
 		//channel->getFrequency(&frequency);
 		//channel->setFrequency(ChangeSemitone(frequency, pitch));
 		
-		// After playing the sound, set the channel paused.
+		// To play the sound, set the channel paused false.
 		channel->setPaused(false);
 	}
 
 	void AudioEngine_FMOD::PlaySong(const std::string & path)
 	{
+		// Play one song at a time. (Only one stream buffer for songs).
+		// When switching songs, fade out the existing one and fade in the new one.
+
+		// Ignore if this song is already playing.
+		if (m_CurrentSongPath == path)
+			return;
+
+		// If a song is playing stop it and set this as the next song.
+		if (m_CurrentSong != 0)
+		{
+			StopSongs();
+			m_NextSongPath = path;
+			return;
+		}
+
+		// Find the song in the SoundMap, if the song does not exist return.
+		SoundMap::iterator sound = m_Sounds[CATEGORY_SONG].find(path);
+		if (sound == m_Sounds[CATEGORY_SONG].end())
+			return;
+
+		// Start playing the song with the volume 0 and Fade in.
+		m_CurrentSongPath = path;
+		m_System->playSound(sound->second, NULL, true, &m_CurrentSong);
+		m_CurrentSong->setChannelGroup(m_Groups[CATEGORY_SONG]);
+		m_CurrentSong->setVolume(0.0f);
+		m_CurrentSong->setPaused(false);
+		m_Fade = FADE_IN;
 	}
 
 	void AudioEngine_FMOD::StopSFXs()
@@ -139,18 +227,27 @@ namespace LinaEngine
 
 	void AudioEngine_FMOD::StopSongs()
 	{
+		// If there is a song that is playing FADE_OUT the song.
+		if (m_CurrentSong != 0)
+			m_Fade = FADE_OUT;
+
+		// If there is a pending request for to play song clear it.
+		m_NextSongPath.clear();
 	}
 
 	void AudioEngine_FMOD::SetMasterVolume(float volume)
 	{
+		m_Master->setVolume(volume);
 	}
 
 	void AudioEngine_FMOD::SetSFXsVolume(float volume)
 	{
+		m_Groups[CATEGORY_SFX]->setVolume(volume);
 	}
 
 	void AudioEngine_FMOD::SetSongsVolume(float volume)
 	{
+		m_Groups[CATEGORY_SONG]->setVolume(volume);
 	}
 
 	void AudioEngine_FMOD::Load(Category type, const std::string & path)

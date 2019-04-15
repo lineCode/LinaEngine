@@ -36,6 +36,7 @@ namespace LinaEngine
 		static  std::string& ShadersPath;
 		static	std::string& TexturesPath;
 		static	std::string& SoundsPath;
+		static	std::string& SongsPath;
 
 		
 	};

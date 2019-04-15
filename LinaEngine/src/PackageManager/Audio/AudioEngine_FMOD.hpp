@@ -26,7 +26,8 @@ namespace LinaEngine
 		void OnInput(class InputEngine& i);
 
 
-
+		
+		void Update(float deltaTime);
 		void LoadSFX(const std::string& path);
 		void LoadSong(const std::string& path);
 		void PlaySFX(const std::string& path, float minVolume, float maxVolume, float minPitch, float maxPitch);
