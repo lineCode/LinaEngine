@@ -30,6 +30,7 @@ namespace LinaEngine
 {
 	class RenderingEngine;
 	class InputEngine;
+	class AudioEngine;
 
 	class LINA_API Application
 	{
@@ -57,6 +58,12 @@ namespace LinaEngine
 			return *m_RenderingEngine;
 		}
 
+		inline AudioEngine& GetAudioEngine() const
+		{
+			LINA_CORE_ASSERT(m_AudioEngine, "Rendering Engine is nullptr!");
+			return *m_AudioEngine;
+		}
+
 	private:
 
 		static Application* instance;
@@ -64,6 +71,7 @@ namespace LinaEngine
 		LayerStack m_LayerStack;
 		std::unique_ptr<RenderingEngine> m_RenderingEngine;
 		std::unique_ptr<InputEngine> m_InputEngine;
+		std::unique_ptr<AudioEngine> m_AudioEngine;
 	};
 
 	// Defined in client.

@@ -23,6 +23,7 @@ Timestamp: 12/29/2018 10:43:46 PM
 #include "Lina/Input/InputEngine.hpp"
 #include "PackageManager/Graphics/GraphicsAdapter.hpp"
 #include "PackageManager/Input/InputAdapter.hpp"
+#include "PackageManager/Audio/AudioAdapter.hpp"
 
 namespace LinaEngine
 {
@@ -64,11 +65,20 @@ namespace LinaEngine
 		// Set window reference in input renderingEngine.
 		m_InputEngine->SetApplication(*this);
 
+		// Get an audio adapter.
+		AudioAdapter audioAdpt;
+
+		m_AudioEngine = std::unique_ptr<AudioEngine>(audioAdpt.CreateAudioEngine());
+
+		m_AudioEngine->SetApplication(*this);
+
 		// Initialize rendering renderingEngine.
 		m_RenderingEngine->Initialize();
 
 		// Initialize input renderingEngine.
 		m_InputEngine->Initialize();
+
+		m_AudioEngine->Initialize();
 
 		// TODO: Carry start to different block.
 		// Start the rendering renderingEngine.
@@ -92,6 +102,8 @@ namespace LinaEngine
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
 		m_RenderingEngine->OnEvent(e);
+
+		m_AudioEngine->OnEvent(e);
 		
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -110,6 +122,8 @@ namespace LinaEngine
 
 			// Update rendering renderingEngine.
 			m_RenderingEngine->OnUpdate();
+
+			m_AudioEngine->OnUpdate();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
