@@ -37,8 +37,8 @@ namespace LinaEngine
 		/* Load Songs from the given path and insert into the SoundMap.  */
 		void LoadSong(const std::string& path);
 
-		/* Play the Sound Effect that loaded. Additional parameters are for deciding to the volume and pitch interval.  */
-		void PlaySFX(const std::string& path, float minVolume, float maxVolume, float minPitch, float maxPitch);
+		/* Play the Sound Effect that loaded. Additional parameters are for deciding to the volume interval.  */
+		void PlaySFX(const std::string& path, float minVolume, float maxVolume);
 
 		/* Play the Song that loaded.  */
 		void PlaySong(const std::string& path);

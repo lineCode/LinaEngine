@@ -68,7 +68,10 @@ namespace LinaEngine
 	void LinaEngine::AudioEngine_FMOD::Start()
 	{
 		LoadSFX(ResourceConstants::SoundsPath + "jaguar.wav");
+		LoadSFX(ResourceConstants::SoundsPath + "singing.wav");
+
 		LoadSong(ResourceConstants::SongsPath + "stereo.ogg");
+		LoadSong(ResourceConstants::SongsPath + "wave.mp3"); // Don't use mp3 since it is licensed. Remove it later.
 	}
 
 	void LinaEngine::AudioEngine_FMOD::OnUpdate()
@@ -85,19 +88,28 @@ namespace LinaEngine
 
 	void AudioEngine_FMOD::OnInput(InputEngine& i)
 	{
-		if (i.GetKeyDown(LINA_KEY_B))
-		{
-			PlaySFX(ResourceConstants::SoundsPath + "jaguar.wav", 0.0f, 1.0f, 20.0f, 2000.0f);
-		}
 		if (i.GetKeyDown(LINA_KEY_V))
 		{
-			StopSFXs();
+			PlaySFX(ResourceConstants::SoundsPath + "jaguar.wav", 0.0f, 1.0f);
+		}
+		if (i.GetKeyDown(LINA_KEY_B))
+		{
+			PlaySFX(ResourceConstants::SoundsPath + "singing.wav", 0.0f, 1.0f);
 		}
 		if (i.GetKeyDown(LINA_KEY_N))
 		{
+			StopSFXs();
+		}
+
+		if (i.GetKeyDown(LINA_KEY_M))
+		{
 			PlaySong(ResourceConstants::SongsPath + "stereo.ogg");
 		}
-		if (i.GetKeyDown(LINA_KEY_M))
+		if (i.GetKeyDown(LINA_KEY_K))
+		{
+			PlaySong(ResourceConstants::SongsPath + "wave.mp3");
+		}
+		if (i.GetKeyDown(LINA_KEY_L))
 		{
 			StopSongs();
 		}
@@ -172,7 +184,7 @@ namespace LinaEngine
 		Load(CATEGORY_SONG, path);
 	}
 
-	void AudioEngine_FMOD::PlaySFX(const std::string & path, float minVolume, float maxVolume, float minPitch, float maxPitch)
+	void AudioEngine_FMOD::PlaySFX(const std::string & path, float minVolume, float maxVolume)
 	{
 		// Try to find sound effect and return if not found.
 		SoundMap::iterator sound = m_Sounds[CATEGORY_SFX].find(path);
@@ -181,7 +193,6 @@ namespace LinaEngine
 
 		// Calculate random volume and pitch in selected range.
 		float volume = RandomBetween(minVolume, maxVolume);
-		float pitch = RandomBetween(minPitch, maxPitch);
 
 		// Play the sound effect with these initial sound values.
 		FMOD::Channel* channel;
@@ -191,6 +202,7 @@ namespace LinaEngine
 		
 
 		// Set the pitch randomly based on Semitone later. 
+		//float pitch = RandomBetween(minPitch, maxPitch);
 		//float frequency;
 		//channel->getFrequency(&frequency);
 		//channel->setFrequency(ChangeSemitone(frequency, pitch));
