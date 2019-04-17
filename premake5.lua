@@ -22,7 +22,7 @@ IncludeDir["FMOD"] = "LinaEngine/vendor/FMOD/include"
 DLLDir = {}
 DLLDir["SDL"] = "LinaEngine/vendor/SDL2-2.0.9/lib/x64"
 DLLDir["LinaEngine"] = "bin/" .. outputdir .. "/LinaEngine"
-DLLDir["FMOD"] = "LinaEngine/vendor/FMOD/bin"
+DLLDir["FMOD"] = "LinaEngine/vendor/FMOD/lib"
 
 LibDir = {}
 LibDir["SDL"] = "LinaEngine/vendor/SDL2-2.0.9/lib/x64"
